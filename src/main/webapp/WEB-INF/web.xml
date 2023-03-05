@@ -39,6 +39,15 @@
     <url-pattern>/jsp/logout.do</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>UserServlet</servlet-name>
+    <servlet-class>com.oumanatsumi.servlet.user.UserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserServlet</servlet-name>
+    <url-pattern>/jsp/user.do</url-pattern>
+  </servlet-mapping>
+
   <filter>
     <filter-name>SysFilter</filter-name>
     <filter-class>com.oumanatsumi.filter.SysFilter</filter-class>

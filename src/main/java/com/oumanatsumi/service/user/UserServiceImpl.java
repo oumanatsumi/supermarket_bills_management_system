@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.sql.Connection;
 
 public class UserServiceImpl implements UserService{
+
     private UserDAO userDAO;
     public UserServiceImpl(){
         userDAO = new UserDAOImpl();
@@ -36,6 +37,25 @@ public class UserServiceImpl implements UserService{
         }
 
         return user;
+    }
+
+    @Override
+    public boolean updatePwd(int id, String pwd) {
+        System.out.println("UserServlet2:" + pwd);
+
+        boolean flag = false;
+        Connection connection = null;
+        try{
+            connection = BaseDAO.getConnection();
+            if(userDAO.updatePwd(connection,id,pwd) > 0) {
+                flag = true;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            BaseDAO.closeResult(connection, null, null);
+        }
+        return flag;
     }
 
     @Test

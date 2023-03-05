@@ -6,22 +6,23 @@ import com.oumanatsumi.pojo.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class UserDAOImpl implements UserDAO{
-
+public class UserDAOImpl implements UserDAO {
+    // 得到要登录的用户
     @Override
     public User getLoginUser(Connection connection, String userCode) throws Exception {
         PreparedStatement pstm = null;
         ResultSet rs = null;
         User user = null;
 
-        if(connection != null) {
+        if (connection != null) {
             String sql = "select * from smbms_user where userCode=?";
             Object[] params = {userCode};
 
             rs = BaseDAO.execute(connection, pstm, rs, sql, params);
 
-            if(rs.next()) {
+            if (rs.next()) {
                 user = new User();
                 user.setId(rs.getInt("id"));
                 user.setUserCode(rs.getString("userCode"));
@@ -37,9 +38,23 @@ public class UserDAOImpl implements UserDAO{
                 user.setModifyBy(rs.getInt("modifyBy"));
                 user.setModifyDate(rs.getTimestamp("modifyDate"));
             }
-            BaseDAO.closeResult(null,pstm,rs);
+            BaseDAO.closeResult(null, pstm, rs);
         }
 
         return user;
+    }
+
+    // 修改当前用户密码
+    @Override
+    public int updatePwd(Connection connection, int id, String pwd) throws SQLException {
+        PreparedStatement pstm = null;
+        int ex = 0;
+        if (connection != null) {
+            String sql = "update smbms_user set userPassword= ? where id = ?";
+            Object parms[] = {pwd, id};
+            ex = BaseDAO.execute(connection, pstm, sql, parms);
+            BaseDAO.closeResult(connection, pstm, null);
+        }
+        return ex;
     }
 }
