@@ -1,19 +1,26 @@
 package com.oumanatsumi.service.user;
 
 import com.oumanatsumi.dao.BaseDAO;
+import com.oumanatsumi.dao.role.RoleDAO;
+import com.oumanatsumi.dao.role.RoleDAOImpl;
 import com.oumanatsumi.dao.user.UserDAO;
 import com.oumanatsumi.dao.user.UserDAOImpl;
+import com.oumanatsumi.pojo.Role;
 import com.oumanatsumi.pojo.User;
 import org.junit.Test;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserServiceImpl implements UserService{
 
     private UserDAO userDAO;
-    public UserServiceImpl(){
+    public UserServiceImpl()
+    {
         userDAO = new UserDAOImpl();
     }
+
 
     @Override
     public User login(String userCode, String userPassword) {
@@ -58,11 +65,41 @@ public class UserServiceImpl implements UserService{
         return flag;
     }
 
+    @Override
+    public int getUserCount(String queryUserName, int queryUserRole) {
+        int result = 0;
+        Connection connection = null;
+        try{
+            connection = BaseDAO.getConnection();
+            result = userDAO.getUserCount(connection,queryUserName,queryUserRole);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            BaseDAO.closeResult(connection, null, null);
+        }
+        return result;
+    }
+
+    @Override
+    public List<User> getUserList(String queryUserName, int queryUserRole, int currentPageNo, int pageSize) {
+        List<User> userList = new ArrayList<>();
+        Connection connection = null;
+        try{
+            connection = BaseDAO.getConnection();
+            userList = userDAO.getUserList(connection,queryUserName,queryUserRole,currentPageNo,pageSize);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            BaseDAO.closeResult(connection, null, null);
+        }
+        return userList;
+    }
+
     @Test
     public void test(){
         UserServiceImpl userService = new UserServiceImpl();
-        User admin = userService.login("admin", "1234567");
-        System.out.println(admin.getUserPassword());
+        int count = userService.getUserCount(null,0);
+        System.out.println(count);
     }
 
 
