@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +38,14 @@ public class UserServlet extends HttpServlet {
 
         if(method != null && method.equals("savepwd")){
             this.updatePwd(request, response);
-        }else if(method.equals("pwdmodify") && method!=null){
+        }else if(method!=null && method.equals("pwdmodify")){
             this.pwdModify(request,response);
         }else if(method != null && method.equals("query")) {
             this.query(request,response);
+        }else if(method != null && method.equals("add")){
+            this.add(request, response);
+        } else if(method != null && method.equals("getrolelist")) {
+            this.getRoleList(request, response);
         }
     }
 
@@ -69,11 +76,11 @@ public class UserServlet extends HttpServlet {
     }
 
     // 验证旧密码,session中有用户的密码
-    public void pwdModify(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void pwdModify(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         // 从Session中取ID
-        Object o = req.getSession().getAttribute(Constants.USER_SESSION);
-        String oldpassword = req.getParameter("oldpassword");
+        Object o = request.getSession().getAttribute(Constants.USER_SESSION);
+        String oldpassword = request.getParameter("oldpassword");
         Map<String, String> resultMap = new HashMap<String, String>();
 
         // session过期
@@ -92,8 +99,8 @@ public class UserServlet extends HttpServlet {
             }
         }
 
-        resp.setContentType("application/json");
-        PrintWriter outWriter = resp.getWriter();
+        response.setContentType("application/json");
+        PrintWriter outWriter = response.getWriter();
         // JSONArray 阿里巴巴的JSON工具类
         outWriter.write(JSONArray.toJSONString(resultMap));
         outWriter.flush();
@@ -166,5 +173,55 @@ public class UserServlet extends HttpServlet {
         request.setAttribute("totalCount", totalCount);
         request.setAttribute("currentPageNo", currentPageNo);
         request.getRequestDispatcher("userlist.jsp").forward(request, response);
+    }
+
+    // 添加用户
+    public void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        String userCode = request.getParameter("userCode");
+        String userName = request.getParameter("userName");
+        String userPassword = request.getParameter("userPassword");
+        String gender = request.getParameter("gender");
+        String birthday = request.getParameter("birthday");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        String userRole = request.getParameter("userRole");
+
+        User user = new User();
+        user.setUserCode(userCode);
+        user.setUserName(userName);
+        user.setUserPassword(userPassword);
+        user.setAddress(address);
+        try {
+            user.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(birthday));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        user.setGender(Integer.valueOf(gender));
+        user.setPhone(phone);
+        user.setUserRole(Integer.valueOf(userRole));
+        user.setCreationDate(new Date());
+        user.setCreatedBy(((User)request.getSession().getAttribute(Constants.USER_SESSION)).getId());
+
+        UserService userService = new UserServiceImpl();
+        if(userService.addUser(user)){
+            request.getRequestDispatcher("useradd.jsp").forward(request, response);
+        }else {
+            request.getRequestDispatcher("useradd.jsp").forward(request, response);
+        }
+    }
+
+    // 获取角色列表
+    private void getRoleList(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Role> roleList = null;
+        RoleService roleService = new RoleServiceImpl();
+        roleList = roleService.getRoleList();
+        // 把roleList转换成json对象输出
+        response.setContentType("application/json");
+        PrintWriter outPrintWriter = response.getWriter();
+        outPrintWriter.write(JSONArray.toJSONString(roleList));
+        outPrintWriter.flush();
+        outPrintWriter.close();
     }
 }

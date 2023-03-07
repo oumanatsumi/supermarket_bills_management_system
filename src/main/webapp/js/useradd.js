@@ -7,7 +7,7 @@ var birthday = null;
 var userRole = null;
 var addBtn = null;
 var backBtn = null;
-
+charset="utf-8"
 
 $(function(){
 	userCode = $("#userCode");

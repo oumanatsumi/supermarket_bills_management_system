@@ -9,7 +9,7 @@ update time:2023/3/4
 
 ### 开发过程中遇到的问题
 
-####1.CSS文件加载不出来
+#### 1.CSS文件加载不出来
 
 解决方法：
 
@@ -18,7 +18,7 @@ update time:2023/3/4
 还有一种方案是将JSP页面的 <!DOCTYPE html>注释掉可以正常显示css样式
 
 
-####2.${pageContext.request.contextPath}不生效
+#### 2.${pageContext.request.contextPath}不生效
 
 想通过${pageContext.request.contextPath}获取当前路径，然后发现这行代码被解析成了/$%7BpageContext.request.contextPath%7D，原因是因为web-app版本号过低。IDEA在创建javaweb项目的时候，web-app的版本默认是2.3，而要正确解析上面的代码获得当前路径，我们需要把web-app的版本手动改成2.5及以上版本。
 
@@ -33,3 +33,12 @@ update time:2023/3/4
          
 </web-app>
 ```
+
+
+#### 3.新建用户界面出现乱码
+
+添加了Filter过滤器，并且在jsp中也都加了charset="UTF-8"的声明，但在该界面部分内容仍然出现乱码。
+
+解决方法：在Tomcat的VM OPTION设置中添加如下图所示的代码即可解决。
+
+![img.png](img.png)

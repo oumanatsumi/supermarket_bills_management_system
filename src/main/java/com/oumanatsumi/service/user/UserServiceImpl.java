@@ -95,6 +95,23 @@ public class UserServiceImpl implements UserService{
         return userList;
     }
 
+    @Override
+    public boolean addUser(User user) {
+        boolean flag = false;
+        Connection connection = null;
+        try {
+            connection = BaseDAO.getConnection();
+            if(userDAO.add(connection,user) > 0){
+                flag = true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            BaseDAO.closeResult(connection,null,null);
+        }
+        return flag;
+    }
+
     @Test
     public void test(){
         UserServiceImpl userService = new UserServiceImpl();

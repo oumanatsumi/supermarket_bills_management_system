@@ -61,7 +61,7 @@
 	        		<font color="red"></font>
                 </div>
                 <div class="providerAddBtn">
-                    <input type="button" name="add" id="add" value="保存" >
+                    <input type="submit" name="add" id="add" value="保存" >
 					<input type="button" id="back" name="back" value="返回" >
                 </div>
             </form>
@@ -69,4 +69,4 @@
 </div>
 </section>
 <%@include file="/jsp/common/foot.jsp" %>
-<script type="text/javascript" src="${pageContext.request.contextPath }/js/useradd.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/js/useradd.js" charset="UTF-8"></script>
