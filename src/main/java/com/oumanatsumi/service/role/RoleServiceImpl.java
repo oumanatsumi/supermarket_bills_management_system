@@ -1,4 +1,4 @@
-package com.oumanatsumi.service.user;
+package com.oumanatsumi.service.role;
 
 import com.oumanatsumi.dao.BaseDAO;
 import com.oumanatsumi.dao.role.RoleDAO;

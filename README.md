@@ -6,6 +6,10 @@
 
 update time:2023/3/4
 
+### 项目整体模块图
+
+![img_5.png](img_5.png)
+
 
 ### 开发过程中遇到的问题
 
@@ -42,3 +46,15 @@ update time:2023/3/4
 解决方法：在Tomcat的VM OPTION设置中添加如下图所示的代码即可解决。
 
 ![img.png](img.png)
+
+
+
+### 界面展示
+
+![img_4.png](img_4.png)
+
+![img_1.png](img_1.png)
+
+![img_2.png](img_2.png)
+
+![img_3.png](img_3.png)

@@ -61,8 +61,8 @@
 	        		<font color="red"></font>
                 </div>
                 <div class="providerAddBtn">
-                    <input type="submit" name="add" id="add" value="保存" >
-					<input type="button" id="back" name="back" value="返回" >
+                    <input type="Button" name="add" id="add" value="保存" >
+					<input type="Button" id="back" name="back" value="返回" >
                 </div>
             </form>
         </div>
