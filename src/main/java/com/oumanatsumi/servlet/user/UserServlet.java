@@ -38,14 +38,24 @@ public class UserServlet extends HttpServlet {
 
         if(method != null && method.equals("savepwd")){
             this.updatePwd(request, response);
-        }else if(method!=null && method.equals("pwdmodify")){
+        } else if(method.equals("pwdmodify") && method!=null){
             this.pwdModify(request,response);
-        }else if(method != null && method.equals("query")) {
+        } else if(method != null && method.equals("query")) {
             this.query(request,response);
-        }else if(method != null && method.equals("add")){
+        } else if(method != null && method.equals("add")){
             this.add(request, response);
-        } else if(method != null && method.equals("getrolelist")) {
+        } else if(method != null && method.equals("getrolelist")){
             this.getRoleList(request, response);
+        } else if(method != null && method.equals("ucexist")){
+            this.userCodeExist(request, response);
+        } else if(method != null && method.equals("deluser")){
+            this.delUser(request, response);
+        } else if(method != null && method.equals("view")){
+            this.getUserById(request, response,"userview.jsp");
+        } else if(method != null && method.equals("modify")){
+            this.getUserById(request, response,"usermodify.jsp");
+        } else if(method != null && method.equals("modifyexe")) {
+            this.modify(request, response);
         }
     }
 
@@ -223,5 +233,116 @@ public class UserServlet extends HttpServlet {
         outPrintWriter.write(JSONArray.toJSONString(roleList));
         outPrintWriter.flush();
         outPrintWriter.close();
+    }
+
+    // 删除用户
+    public void delUser(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String id = request.getParameter("uid");
+        Integer delId = 0;
+        try{
+            delId = Integer.parseInt(id);
+        }catch (Exception e) {
+            delId = 0;
+        }
+        HashMap<String, String> resultMap = new HashMap<String, String>();
+        if(delId <= 0){
+            resultMap.put("delResult", "notexist");
+        }else{
+            UserService userService = new UserServiceImpl();
+            if(userService.deleteUserById(delId)){
+                resultMap.put("delResult", "true");
+            }else{
+                resultMap.put("delResult", "false");
+            }
+        }
+
+        // 把resultMap转换成json对象输出
+        response.setContentType("application/json");
+        PrintWriter outPrintWriter = response.getWriter();
+        outPrintWriter.write(JSONArray.toJSONString(resultMap));
+        outPrintWriter.flush();
+        outPrintWriter.close();
+    }
+
+    // 修改用户信息
+    public void modify(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String id = request.getParameter("uid");
+        String userName = request.getParameter("userName");
+        String gender = request.getParameter("gender");
+        String birthday = request.getParameter("birthday");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        String userRole = request.getParameter("userRole");
+
+        User user = new User();
+        user.setId(Integer.valueOf(id));
+        user.setUserName(userName);
+        user.setGender(Integer.valueOf(gender));
+        try {
+            user.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(birthday));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        user.setPhone(phone);
+        user.setAddress(address);
+        user.setUserRole(Integer.valueOf(userRole));
+        user.setModifyBy(((User)request.getSession().getAttribute(Constants.USER_SESSION)).getId());
+        user.setModifyDate(new Date());
+
+        UserService userService = new UserServiceImpl();
+        if(userService.modify(user)){
+            response.sendRedirect(request.getContextPath()+"/jsp/user.do?method=query");
+        }else{
+            request.getRequestDispatcher("usermodify.jsp").forward(request, response);
+        }
+
+    }
+
+    // 通过userId查询user
+    public void getUserById(HttpServletRequest request, HttpServletResponse response,String url)
+            throws ServletException, IOException {
+
+        String id = request.getParameter("uid");
+        if(!StringUtils.isNullOrEmpty(id)){
+            // 调用后台方法得到user对象
+            UserService userService = new UserServiceImpl();
+            User user = userService.getUserById(id);
+            request.setAttribute("user", user);
+            request.getRequestDispatcher(url).forward(request, response);
+        }
+
+    }
+
+    // 根据userCode查询出User
+    private void userCodeExist(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // 判断用户账号是否可用
+        String userCode = request.getParameter("userCode");
+
+        HashMap<String, String> resultMap = new HashMap<String, String>();
+        if(StringUtils.isNullOrEmpty(userCode)){
+            // userCode == null || userCode.equals("")
+            resultMap.put("userCode", "exist");
+        }else{
+            UserService userService = new UserServiceImpl();
+            User user = userService.selectUserCodeExist(userCode);
+            if(null != user){
+                resultMap.put("userCode","exist");
+            }else{
+                resultMap.put("userCode", "notexist");
+            }
+        }
+
+        // 把resultMap转为json字符串以json的形式输出
+        // 配置上下文的输出类型
+        response.setContentType("application/json");
+        // 从response对象中获取往外输出的writer对象
+        PrintWriter outPrintWriter = response.getWriter();
+        // 把resultMap转为json字符串 输出
+        outPrintWriter.write(JSONArray.toJSONString(resultMap));
+        outPrintWriter.flush(); // 刷新
+        outPrintWriter.close(); // 关闭流
     }
 }

@@ -17,7 +17,17 @@ public interface UserDAO {
     // 查询用户列表
     public List<User> getUserList(Connection connection, String userName, int userRole, int currentPageNo, int pageSize)throws Exception;
 
-    // 添加用户
-    public int add(Connection connection, User user) throws SQLException;
+    // 增加用户信息
+    public int add(Connection connection, User user)throws Exception;
+
+    // 通过userId删除user
+    public int deleteUserById(Connection connection, Integer delId)throws Exception;
+
+    // 修改用户信息
+    public int modify(Connection connection, User user)throws Exception;
+
+    // 通过userId查询user
+    public User getUserById(Connection connection, String id)throws Exception;
+
 
 }

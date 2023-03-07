@@ -112,6 +112,71 @@ public class UserServiceImpl implements UserService{
         return flag;
     }
 
+    // 通过userId删除user
+    public boolean deleteUserById(Integer delId) {
+        Connection connection = null;
+        boolean flag = false;
+        try {
+            connection = BaseDAO.getConnection();
+            if(userDAO.deleteUserById(connection,delId) > 0) {
+                flag = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            BaseDAO.closeResult(connection, null, null);
+        }
+        return flag;
+    }
+
+    // 修改用户信息
+    public boolean modify(User user) {
+        Connection connection = null;
+        boolean flag = false;
+        try {
+            connection = BaseDAO.getConnection();
+            if(userDAO.modify(connection,user) > 0) {
+                flag = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            BaseDAO.closeResult(connection, null, null);
+        }
+        return flag;
+    }
+
+    // 通过userId查询user
+    public User getUserById(String id) {
+        User user = null;
+        Connection connection = null;
+        try{
+            connection = BaseDAO.getConnection();
+            user = userDAO.getUserById(connection,id);
+        }catch (Exception e) {
+            e.printStackTrace();
+            user = null;
+        }finally{
+            BaseDAO.closeResult(connection, null, null);
+        }
+        return user;
+    }
+
+    // 根据userCode查询出User
+    public User selectUserCodeExist(String userCode) {
+        Connection connection = null;
+        User user = null;
+        try {
+            connection = BaseDAO.getConnection();
+            user = userDAO.getLoginUser(connection, userCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            BaseDAO.closeResult(connection, null, null);
+        }
+        return user;
+    }
+
     @Test
     public void test(){
         UserServiceImpl userService = new UserServiceImpl();
